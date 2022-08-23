@@ -58,8 +58,8 @@ extern "C" {
 #define ICM42688_ACCEL_YOUT_0        0x22
 #define ICM42688_ACCEL_ZOUT_1        0x23
 #define ICM42688_ACCEL_ZOUT_0        0x24
-//#define ICM42688_TEMP_OUT_H          0x41
-//#define ICM42688_TEMP_OUT_L          0x42
+#define ICM42688_TEMP_OUT_H          0x1D
+#define ICM42688_TEMP_OUT_L          0x1E
 #define ICM42688_GYRO_XOUT_1         0x25
 #define ICM42688_GYRO_XOUT_0         0x26
 #define ICM42688_GYRO_YOUT_1         0x27
@@ -380,6 +380,8 @@ esp_err_t iot_icm42688_get_raw_gyro(icm42688_handle_t sensor, icm42688_raw_gyro_
 //esp_err_t iot_ICM42688_set_smplrt_div(ICM42688_handle_t sensor, uint8_t val);
 //
 //esp_err_t iot_ICM42688_set_fifo_en(ICM42688_handle_t sensor, uint8_t flags);
+
+esp_err_t iot_icm42688_get_temp(icm42688_handle_t sensor, int16_t *temp);
 
 #ifdef __cplusplus
 }

@@ -3,15 +3,18 @@
 #include "driver/gpio.h"
 #include "driver/uart.h"
 #include "mpl3115.h"
+#include "sht40.h"
 static i2c_bus_handle_t i2c_bus = NULL;
 static icm42688_handle_t icm42688_dev = NULL;
 static mpl3115_handle_t mpl3115_dev = NULL;
+static sht40_handle_t sht40_dev = NULL;
 
 void dev_init()
 {
     i2c_bus_init();
     icm42688_init();
-	mpl3115_init();
+	//mpl3115_init();
+	sht40_dev = iot_sht40_create(i2c_bus);
     //uart_init();
 }
 
@@ -32,6 +35,7 @@ void i2c_bus_init(){
     conf.scl_io_num = (gpio_num_t)I2C_MASTER_SCL_IO;
     conf.scl_pullup_en = GPIO_PULLUP_ENABLE;
     conf.master.clk_speed = I2C_MASTER_FREQ_HZ;
+	conf.clk_flags = I2C_SCLK_SRC_FLAG_FOR_NOMAL;
     i2c_bus = iot_i2c_bus_create(I2C_MASTER_NUM, &conf);
 }
 
@@ -52,6 +56,11 @@ void mpl3115_init()
 	esp_rom_printf("MPL3115 started");
 }
 
+void sht40_init()
+{
+	sht40_dev = iot_sht40_create(i2c_bus);
+}
+
 void showAcce()
 {
 	icm42688_raw_acce_value_t val;
@@ -61,8 +70,15 @@ void showAcce()
 					(float)val.raw_acce_z * val.raw_acce_z);
 	esp_rom_printf("Accel: %d, %d, %d --- ", val.raw_acce_x, val.raw_acce_y, val.raw_acce_z);
 	esp_rom_printf("val = %d \n", (int)(g * 1000 / 4096));
-
-	float alt = iot_mp3115_readf(mpl3115_dev);
-	printf("H = %.2f \n", alt);
+	int16_t temp;
+	iot_icm42688_get_temp(icm42688_dev, &temp);
+	esp_rom_printf("temp = %d \n", temp);
+	uint32_t p = iot_mp3115_read(mpl3115_dev);
+	printf("P = %d \n", p);
+	double t2 = iot_mp3115_readT(mpl3115_dev);
+	printf("t1 = %.2f \n", t2);
+	double shttemp;
+	read_sensor(sht40_dev, &shttemp);
+	printf("t2 = %.2f \n", shttemp);
 	fflush(stdout);
 }

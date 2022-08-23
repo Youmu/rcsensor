@@ -13,6 +13,8 @@
 #include "esp_spi_flash.h"
 #include "sensors.h"
 
+#include "azure_iot_hub_client.h"
+
 
 void app_main(void)
 {
@@ -21,6 +23,7 @@ void app_main(void)
     esp_rom_printf("I2C Inited!\n");
     icm42688_init();
     mpl3115_init();
+    sht40_init();
     esp_rom_printf("ICM42688 loaded\n");
     for (int i = 100; i >= 0; i--) {
         //esp_rom_printf("Restarting in %d seconds...\n", i);

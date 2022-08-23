@@ -238,6 +238,20 @@ esp_err_t iot_icm42688_get_raw_gyro(icm42688_handle_t sensor, icm42688_raw_gyro_
     return ret;
 }
 
+
+esp_err_t iot_icm42688_get_temp(icm42688_handle_t sensor, int16_t *temp)
+{
+    esp_err_t ret;
+    uint8_t tmp[2];
+    int16_t rawt;
+    ret = iot_icm42688_read(sensor, ICM42688_TEMP_OUT_H, 2, tmp);
+    rawt = (int16_t)(tmp[0]<<8) | tmp[1];
+    float t = (float)rawt /132.48 + 25;
+    *temp = (int16_t)(t * 10);
+    return ret;
+}
+
+
 //esp_err_t iot_icm42688_get_fifo_data(icm42688_handle_t sensor, size_t len, uint8_t *buffer)
 //{
 //    mpu6050_dev_t* sens = (mpu6050_dev_t*) sensor;
